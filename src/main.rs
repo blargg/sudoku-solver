@@ -6,14 +6,52 @@ struct Grid<A> {
 
 type CellAssignment = BTreeSet<i32>;
 
+fn empty_cell() -> CellAssignment {
+    let mut empty = BTreeSet::new();
+    for i in 1..=9 {
+        empty.insert(i);
+    }
+
+    empty
+}
+
 impl Grid<CellAssignment> {
     fn solve(&self) -> Self {
-        todo!()
+        let _ = Self::empty();
+        todo!("finish the solver");
+    }
+
+    /// Creates a new, empty puzzle.
+    fn empty() -> Self {
+        Self {
+            data: std::array::from_fn(|_| std::array::from_fn(|_| empty_cell())),
+        }
+    }
+
+    // This is incomplete. Just checks if any cell is empty.
+    fn is_valid(&self) -> bool {
+        for row in &self.data {
+            for value in row {
+                if value.len() == 0 {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     fn get_assigned(&self, x: usize, y: usize) -> i32 {
         assert!(self.data[x][y].len() == 1, "should have exactly one value");
         *self.data[x][y].first().expect("There should be at least one value possible for this cell")
+    }
+
+    /// For the given assigned cell, remove that value from the possible other values from the
+    /// other cells in the same row, column, and 3x3 cell.
+    fn apply_constraints(&mut self, x: usize, y: usize) {
+        self.update_row(x,y);
+        self.update_col(x,y);
+        self.update_cell(x,y);
     }
 
     fn update_row(&mut self, x: usize, y: usize) {
