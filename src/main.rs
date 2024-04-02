@@ -1,5 +1,6 @@
 use std::collections::BTreeSet;
 
+#[derive(Clone)]
 struct Grid<A> {
     data:[[A;9];9],
 }
@@ -17,7 +18,8 @@ fn empty_cell() -> CellAssignment {
 
 impl Grid<CellAssignment> {
     fn solve(&self) -> Self {
-        let _ = Self::empty();
+        let mut puzzle = self.clone();
+        puzzle.apply_constraints_all_cells();
         todo!("finish the solver");
     }
 
@@ -26,6 +28,19 @@ impl Grid<CellAssignment> {
         Self {
             data: std::array::from_fn(|_| std::array::from_fn(|_| empty_cell())),
         }
+    }
+
+    /// A board is complete when there is a valid assignment to every cell.
+    fn compete(&self) -> bool {
+        for row in &self.data {
+            for cell in row {
+                if !cell.is_empty() {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     // This is incomplete. Just checks if any cell is empty.
@@ -48,10 +63,21 @@ impl Grid<CellAssignment> {
 
     /// For the given assigned cell, remove that value from the possible other values from the
     /// other cells in the same row, column, and 3x3 cell.
+    ///
+    /// Property: This should never add new possibilities to a cell.
     fn apply_constraints(&mut self, x: usize, y: usize) {
         self.update_row(x,y);
         self.update_col(x,y);
         self.update_cell(x,y);
+    }
+
+    /// Applys the contraints of all assigned cells.
+    fn apply_constraints_all_cells(&mut self) {
+        for row in 1..=9 {
+            for col in 1..=9 {
+                self.apply_constraints(row, col);
+            }
+        }
     }
 
     fn update_row(&mut self, x: usize, y: usize) {
