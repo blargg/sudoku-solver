@@ -114,8 +114,8 @@ fn most_constraining_fn() { todo!() }
 
 fn all_in_large_cell(x: usize, y: usize) -> impl Iterator<Item=(usize, usize)> { 
     // The initial starting cell for the 3x3 cell block.
-    let row = x / 3;
-    let col = y / 3;
+    let row = x - x % 3;
+    let col = y - y % 3;
     (0..3).flat_map(move |row_offset| { 
         (0..3).map(move |col_offset| {
         (row + row_offset, col + col_offset)
@@ -142,6 +142,36 @@ mod tests {
         for row in 0..9 {
             if row == 0 { continue; }
             assert!(!grid.data[row][0].contains(&1), "cell ({}, 0) still contains the value", row);
+        }
+    }
+
+    #[test]
+    fn constrain_cols() {
+        let mut grid = Grid::empty();
+        grid.data[0][0] = BTreeSet::new();
+        grid.data[0][0].insert(1);
+
+        grid.update_col(0,0);
+
+        for col in 0..9 {
+            if col == 0 { continue; }
+            assert!(!grid.data[0][col].contains(&1), "cell (0, {}) still contains the value", col);
+        }
+    }
+
+    #[test]
+    fn constrain_cell() {
+        let mut grid = Grid::empty();
+        grid.data[3][3] = BTreeSet::new();
+        grid.data[3][3].insert(1);
+
+        grid.update_cell(3,3);
+
+        for row in 3..6 {
+            for col in 3..6 {
+                if (row, col) == (3,3) { continue; }
+                assert!(!grid.data[row][col].contains(&1), "cell ({}, {}) still contains the value", row, col);
+        }
         }
     }
 }
