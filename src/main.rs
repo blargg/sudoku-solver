@@ -18,6 +18,10 @@ fn empty_cell() -> CellAssignment {
 
 impl Grid<CellAssignment> {
     fn solve(&self) -> Self {
+        if self.complete() {
+            return self.clone();
+        }
+
         let mut puzzle = self.clone();
         puzzle.apply_constraints_all_cells();
         todo!("finish the solver");
@@ -31,7 +35,7 @@ impl Grid<CellAssignment> {
     }
 
     /// A board is complete when there is a valid assignment to every cell.
-    fn compete(&self) -> bool {
+    fn complete(&self) -> bool {
         for row in &self.data {
             for cell in row {
                 if !cell.is_empty() {
@@ -124,7 +128,12 @@ fn all_in_large_cell(x: usize, y: usize) -> impl Iterator<Item=(usize, usize)> {
 }
 
 fn main() {
-    println!("Hello, world!");
+    // TODO load from a file.
+    let puzzle = Grid::empty();
+    // TODO, this should probably be checked in the initial solve method.
+    assert!(puzzle.is_valid(), "The puzzle must be valid at the start");
+    let solved = puzzle.solve();
+    println!("{:?}", solved.data);
 }
 
 #[cfg(test)]
