@@ -110,9 +110,28 @@ impl Grid<CellAssignment> {
         }
     }
 
+    fn most_constrainted_variable(&self) -> Option<(usize, usize)> {
+        let mut min_num_vars = None;
+        let mut min_cell = None;
+        for row in 0..9 {
+            for col in 0..9 {
+                let cur_cell = &self.data[row][col];
+                if is_assigned(cur_cell) { continue; }
+                if min_num_vars.map(|cur_min| self.data[row][col].len() < cur_min).unwrap_or(true) {
+                    min_cell = Some((row, col));
+                    min_num_vars = Some(self.data[row][col].len());
+                }
+            }
+        }
+
+        min_cell
+    }
+
 }
 
-fn most_constrainted_variable() { todo!() }
+fn is_assigned(cell: &CellAssignment) -> bool {
+    cell.len() == 1
+}
 
 fn most_constraining_fn() { todo!() }
 
@@ -182,5 +201,25 @@ mod tests {
                 assert!(!grid.data[row][col].contains(&1), "cell ({}, {}) still contains the value", row, col);
         }
         }
+    }
+
+    #[test]
+    fn most_constrainted() {
+        let mut grid = Grid::empty();
+        grid.data[0][0] = BTreeSet::new();
+        grid.data[0][0].insert(1);
+        grid.data[0][0].insert(2);
+        grid.data[0][0].insert(3);
+
+        // Should skip variable that are already assigned.
+        grid.data[3][3] = BTreeSet::new();
+        grid.data[3][3].insert(1);
+
+        // Should find this one
+        grid.data[4][4] = BTreeSet::new();
+        grid.data[4][4].insert(1);
+        grid.data[4][4].insert(2);
+
+        assert!(dbg!(grid.most_constrainted_variable()) == Some((4,4)))
     }
 }
