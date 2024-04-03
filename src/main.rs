@@ -57,7 +57,7 @@ impl Grid<CellAssignment> {
     }
 
     fn get_assigned(&self, x: usize, y: usize) -> i32 {
-        assert!(self.data[x][y].len() == 1, "should have exactly one value");
+        assert!(self.data[x][y].len() == 1, "should have exactly one value. Values: {:?}", self.data[x][y]);
         *self.data[x][y].first().expect("There should be at least one value possible for this cell")
     }
 
@@ -125,4 +125,23 @@ fn all_in_large_cell(x: usize, y: usize) -> impl Iterator<Item=(usize, usize)> {
 
 fn main() {
     println!("Hello, world!");
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn constrain_rows() {
+        let mut grid = Grid::empty();
+        grid.data[0][0] = BTreeSet::new();
+        grid.data[0][0].insert(1);
+
+        grid.update_row(0,0);
+
+        for row in 0..9 {
+            if row == 0 { continue; }
+            assert!(!grid.data[row][0].contains(&1), "cell ({}, 0) still contains the value", row);
+        }
+    }
 }
