@@ -64,12 +64,12 @@ impl Grid<CellAssignment> {
     }
 
     fn solve(&self) -> Option<Self> {
-        if self.complete() {
-            return Some(self.clone());
-        }
-
         let mut puzzle = self.clone();
         puzzle.apply_constraints_all_cells();
+
+        if puzzle.complete() {
+            return Some(puzzle.clone());
+        }
 
         let (row, col) = puzzle.most_constrained_variable()?;
         // TODO, it would be better to order the next choice by which has the fewest possibilities.
