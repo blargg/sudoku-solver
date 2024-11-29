@@ -95,7 +95,7 @@ impl Grid<CellAssignment> {
     fn complete(&self) -> bool {
         for row in &self.data {
             for cell in row {
-                if !cell.is_empty() {
+                if !is_assigned(cell) {
                     return false;
                 }
             }
