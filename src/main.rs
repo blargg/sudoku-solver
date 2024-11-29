@@ -17,18 +17,25 @@ fn empty_cell() -> CellAssignment {
 }
 
 impl Grid<CellAssignment> {
-    fn solve(&self) -> Self {
+    fn solve(&self) -> Option<Self> {
         if self.complete() {
-            return self.clone();
+            return Some(self.clone());
         }
 
         let mut puzzle = self.clone();
         puzzle.apply_constraints_all_cells();
 
         let (row, col) = puzzle.most_constrained_variable().unwrap();
+        // TODO, it would be better to order the next choice by which has the fewest possibilities.
+        // TODO do we have to try all possible orders for variable assignment?
         for possible in puzzle.data[row][col].iter() {
+            let mut next = puzzle.clone();
+            next.data[row][col].clear();
+            next.data[row][col].insert(*possible);
+            next.solve();
         }
-        todo!("finish the solver");
+        // We tried all possibilities, there were no solutions.
+        return None;
     }
 
     /// Creates a new, empty puzzle.
@@ -64,6 +71,10 @@ impl Grid<CellAssignment> {
         return true;
     }
 
+    fn is_assigned(&self, x: usize, y: usize) -> bool {
+        is_assigned(&self.data[x][y])
+    }
+
     fn get_assigned(&self, x: usize, y: usize) -> i32 {
         assert!(
             self.data[x][y].len() == 1,
@@ -80,6 +91,9 @@ impl Grid<CellAssignment> {
     ///
     /// Property: This should never add new possibilities to a cell.
     fn apply_constraints(&mut self, x: usize, y: usize) {
+        if !self.is_assigned(x, y) {
+            return;
+        }
         self.update_row(x, y);
         self.update_col(x, y);
         self.update_cell(x, y);
@@ -87,8 +101,8 @@ impl Grid<CellAssignment> {
 
     /// Applys the contraints of all assigned cells.
     fn apply_constraints_all_cells(&mut self) {
-        for row in 1..=9 {
-            for col in 1..=9 {
+        for row in 0..9 {
+            for col in 0..9 {
                 self.apply_constraints(row, col);
             }
         }
@@ -172,7 +186,7 @@ fn main() {
     // TODO, this should probably be checked in the initial solve method.
     assert!(puzzle.is_valid(), "The puzzle must be valid at the start");
     let solved = puzzle.solve();
-    println!("{:?}", solved.data);
+    println!("{:?}", solved.map(|puzzle| puzzle.data));
 }
 
 #[cfg(test)]
