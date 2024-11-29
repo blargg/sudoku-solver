@@ -265,6 +265,23 @@ mod tests {
         // TODO fuzz test that the solution is valid.
         assert!(puzzle.solve().is_some());
     }
+    #[test]
+    fn solve_simple() {
+        // There is only one missing value. It should be completely constrained.
+        let lines = [
+            "123456789",
+            "4567x9123",
+            "789123456",
+            "234567891",
+            "567891234",
+            "891234567",
+            "345678912",
+            "678912345",
+            "912345678",
+        ];
+        let puzzle = Grid::parse(&lines.join("\n"));
+        assert!(puzzle.solve().is_some());
+    }
 
     #[test]
     fn constrain_rows() {
