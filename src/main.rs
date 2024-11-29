@@ -246,6 +246,27 @@ mod tests {
     use super::*;
 
     #[test]
+    fn solve_trivial() {
+        // This puzzle is already solved. The solver should just return it.
+        let lines = [
+            "123456789",
+            "456789123",
+            "789123456",
+            "234567891",
+            "567891234",
+            "891234567",
+            "345678912",
+            "678912345",
+            "912345678",
+        ];
+        let puzzle = Grid::parse(&lines.join("\n"));
+        // TODO check that the solution is right.
+        // TODO fuzz test that none of the assigned cells change.
+        // TODO fuzz test that the solution is valid.
+        assert!(puzzle.solve().is_some());
+    }
+
+    #[test]
     fn constrain_rows() {
         let mut grid = Grid::empty();
         grid.data[0][0] = BTreeSet::new();
