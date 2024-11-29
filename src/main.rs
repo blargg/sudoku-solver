@@ -25,7 +25,7 @@ impl Grid<CellAssignment> {
         let mut puzzle = self.clone();
         puzzle.apply_constraints_all_cells();
 
-        let (row, col) = puzzle.most_constrained_variable().unwrap();
+        let (row, col) = puzzle.most_constrained_variable()?;
         // TODO, it would be better to order the next choice by which has the fewest possibilities.
         // TODO do we have to try all possible orders for variable assignment?
         for possible in puzzle.data[row][col].iter() {
