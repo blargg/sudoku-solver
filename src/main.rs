@@ -16,7 +16,53 @@ fn empty_cell() -> CellAssignment {
     empty
 }
 
+fn parse_value(c: char) -> Option<i32> {
+    if c == '1' {
+        return Some(1);
+    }
+    if c == '2' {
+        return Some(2);
+    }
+    if c == '3' {
+        return Some(3);
+    }
+    if c == '4' {
+        return Some(4);
+    }
+    if c == '5' {
+        return Some(5);
+    }
+    if c == '6' {
+        return Some(6);
+    }
+    if c == '7' {
+        return Some(7);
+    }
+    if c == '8' {
+        return Some(8);
+    }
+    if c == '9' {
+        return Some(9);
+    }
+
+    return None;
+}
+
 impl Grid<CellAssignment> {
+    fn parse(text: &str) -> Self {
+        let mut data = std::array::from_fn(|_| std::array::from_fn(|_| empty_cell()));
+        for (row_num, line) in text.lines().enumerate() {
+            for (column, c) in line.chars().take(9).enumerate() {
+                let n = parse_value(c);
+                if let Some(n) = n {
+                    data[row_num][column] = [n].into();
+                }
+            }
+        }
+
+        Self { data }
+    }
+
     fn solve(&self) -> Option<Self> {
         if self.complete() {
             return Some(self.clone());
@@ -280,5 +326,23 @@ mod tests {
         grid.data[4][4].insert(2);
 
         assert!(dbg!(grid.most_constrained_variable()) == Some((4, 4)))
+    }
+
+    #[test]
+    fn parse() {
+        let grid = Grid::parse("123456789\n987654321");
+        assert_eq!(grid.data[0][0], [1].into());
+        assert_eq!(grid.data[0][8], [9].into());
+        assert_eq!(grid.data[1][0], [9].into());
+        assert_eq!(grid.data[1][8], [1].into());
+
+        assert_eq!(grid.data[2][0], empty_cell());
+    }
+
+    #[test]
+    fn parse_with_unfilled() {
+        let grid = Grid::parse("x2345678x");
+        assert_eq!(grid.data[0][0], empty_cell());
+        assert_eq!(grid.data[0][8], empty_cell());
     }
 }
