@@ -146,7 +146,7 @@ impl Grid<CellAssignment> {
         for row in 0..9 {
             for col in 0..9 {
                 let cur_cell = &self.data[row][col];
-                if is_assigned(cur_cell) {
+                if is_determined(cur_cell) {
                     continue;
                 }
                 if min_num_vars
@@ -165,6 +165,12 @@ impl Grid<CellAssignment> {
 
 fn is_assigned(cell: &CellAssignment) -> bool {
     cell.len() == 1
+}
+
+// A cell is determined when there are 1 or 0 possibilities for assignment.
+// 1 means the cell is assigned. 0 Means there is no possible assignment.
+fn is_determined(cell: &CellAssignment) -> bool {
+    cell.len() <= 1
 }
 
 fn most_constraining_fn() {
