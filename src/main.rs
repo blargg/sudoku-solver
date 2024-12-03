@@ -63,6 +63,22 @@ impl Grid<CellAssignment> {
         Self { data }
     }
 
+    fn to_string(&self) -> String {
+        fn to_char(assignment: &CellAssignment) -> String {
+            if assignment.len() == 1 {
+                return format!("{}", assignment.first().unwrap());
+            } else {
+                return "x".to_owned();
+            }
+        }
+
+        self.data
+            .iter()
+            .map(|line| line.iter().map(|x| to_char(x)).collect::<String>())
+            .collect::<Vec<String>>()
+            .join("\n")
+    }
+
     fn solve(&self) -> Option<Self> {
         let mut puzzle = self.clone();
         puzzle.apply_constraints_all_cells();
@@ -244,8 +260,9 @@ fn main() {
     let puzzle = Grid::empty();
     // TODO, this should probably be checked in the initial solve method.
     assert!(puzzle.is_valid(), "The puzzle must be valid at the start");
-    let solved = puzzle.solve();
-    println!("{:?}", solved.map(|puzzle| puzzle.data));
+    if let Some(puzzle) = puzzle.solve() {
+        println!("{}", puzzle.to_string());
+    }
 }
 
 #[cfg(test)]
