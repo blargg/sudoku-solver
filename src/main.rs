@@ -379,7 +379,7 @@ mod tests {
 
     #[test]
     fn solve_detects_impossible_puzzles() {
-        // This puzzle reqires that some of the variables are guessed.
+        // This puzzle contains a contradiction. It should be easy to report that there is no solution.
         let lines = [
             "11xxxxxxx",
             "xxxxxxxxx",
