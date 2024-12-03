@@ -78,7 +78,10 @@ impl Grid<CellAssignment> {
             let mut next = puzzle.clone();
             next.data[row][col].clear();
             next.data[row][col].insert(*possible);
-            next.solve();
+            let possible_solution = next.solve();
+            if possible_solution.is_some() {
+                return possible_solution;
+            }
         }
         // We tried all possibilities, there were no solutions.
         return None;
@@ -102,6 +105,10 @@ impl Grid<CellAssignment> {
         }
 
         return true;
+    }
+
+    fn get(&self, x: usize, y: usize) -> &CellAssignment {
+        return &self.data[x][y];
     }
 
     // This is incomplete. Just checks if any cell is empty.
@@ -298,6 +305,25 @@ mod tests {
             "912345678",
         ];
         let puzzle = Grid::parse(&lines.join("\n"));
+        assert!(puzzle.solve().is_some());
+    }
+
+    #[test]
+    fn solve_with_guess() {
+        // This puzzle reqires that some of the variables are guessed.
+        let lines = [
+            "x23x56789",
+            "x56789x23",
+            "789123456",
+            "234567891",
+            "567891234",
+            "891234567",
+            "345678912",
+            "678912345",
+            "912345678",
+        ];
+        let puzzle = Grid::parse(&lines.join("\n"));
+        assert_eq!(puzzle.get(0, 0), &empty_cell());
         assert!(puzzle.solve().is_some());
     }
 
