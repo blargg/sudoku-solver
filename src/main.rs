@@ -257,7 +257,25 @@ fn all_in_large_cell(x: usize, y: usize) -> impl Iterator<Item = (usize, usize)>
 
 fn main() {
     // TODO load from a file.
-    let puzzle = Grid::empty();
+    // let puzzle = Grid::empty();
+
+    let lines = [
+        "7xxxxxxxx",
+        "xxxxxxxx7",
+        "xx37xxxxx",
+        "xxxxxxxxx",
+        "xxxxx7xxx",
+        "x7xxxx7xx",
+        "xxxxxxxxx",
+        "x3xxxxxxx",
+        "xxxxxx3xx",
+    ];
+    let puzzle = Grid::parse(&lines.join("\n"));
+    // TODO check that the solution is right.
+    // TODO fuzz test that none of the assigned cells change.
+    // TODO fuzz test that the solution is valid.
+    assert!(puzzle.solve().is_some());
+
     // TODO, this should probably be checked in the initial solve method.
     assert!(puzzle.is_valid(), "The puzzle must be valid at the start");
     if let Some(puzzle) = puzzle.solve() {
