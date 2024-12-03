@@ -290,11 +290,9 @@ fn main() {
         "xxxxxx3xx",
     ];
     let puzzle = Grid::parse(&lines.join("\n"));
-    // TODO check that the solution is right.
     // TODO fuzz test that none of the assigned cells change.
     // TODO fuzz test that the solution is valid.
 
-    // TODO, this should probably be checked in the initial solve method.
     assert!(puzzle.is_valid(), "The puzzle must be valid at the start");
     if let Some(puzzle) = puzzle.solve() {
         println!("{}", puzzle.to_string());
@@ -322,9 +320,6 @@ mod tests {
             "912345678",
         ];
         let puzzle = Grid::parse(&lines.join("\n"));
-        // TODO check that the solution is right.
-        // TODO fuzz test that none of the assigned cells change.
-        // TODO fuzz test that the solution is valid.
         assert!(puzzle.solve().is_some());
     }
 
