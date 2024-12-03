@@ -50,7 +50,8 @@ fn parse_value(c: char) -> Option<i32> {
 
 impl Grid<CellAssignment> {
     fn parse(text: &str) -> Self {
-        let mut data = std::array::from_fn(|_| std::array::from_fn(|_| empty_cell()));
+        let mut puzzle = Grid::empty();
+        let data = &mut puzzle.data;
         for (row_num, line) in text.lines().enumerate() {
             for (column, c) in line.chars().take(9).enumerate() {
                 let n = parse_value(c);
@@ -60,7 +61,7 @@ impl Grid<CellAssignment> {
             }
         }
 
-        Self { data }
+        puzzle
     }
 
     fn to_string(&self) -> String {
