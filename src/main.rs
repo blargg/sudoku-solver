@@ -87,6 +87,10 @@ impl Grid<CellAssignment> {
             return Some(puzzle.clone());
         }
 
+        if puzzle.is_impossible() {
+            return None;
+        }
+
         let (row, col) = puzzle.most_constrained_variable()?;
         // TODO, it would be better to order the next choice by which has the fewest possibilities.
         // TODO do we have to try all possible orders for variable assignment?
@@ -121,6 +125,21 @@ impl Grid<CellAssignment> {
         }
 
         return true;
+    }
+
+    // This is true when the puzzle is not possible to solve.
+    // There is some variable that has no valid values.
+    fn is_impossible(&self) -> bool {
+        for row in &self.data {
+            for cell in row {
+                // There is some variable where there is no possible value. This is no longer solvable
+                if cell.len() == 0 {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     fn get(&self, x: usize, y: usize) -> &CellAssignment {
@@ -265,8 +284,8 @@ fn main() {
         "xx37xxxxx",
         "xxxxxxxxx",
         "xxxxx7xxx",
-        "x7xxxx7xx",
-        "xxxxxxxxx",
+        "x7xxxxxxx",
+        "xxxxxx7xx",
         "x3xxxxxxx",
         "xxxxxx3xx",
     ];
@@ -274,12 +293,13 @@ fn main() {
     // TODO check that the solution is right.
     // TODO fuzz test that none of the assigned cells change.
     // TODO fuzz test that the solution is valid.
-    assert!(puzzle.solve().is_some());
 
     // TODO, this should probably be checked in the initial solve method.
     assert!(puzzle.is_valid(), "The puzzle must be valid at the start");
     if let Some(puzzle) = puzzle.solve() {
         println!("{}", puzzle.to_string());
+    } else {
+        println!("There is no valid solution");
     }
 }
 
@@ -360,6 +380,24 @@ mod tests {
         let puzzle = Grid::parse(&lines.join("\n"));
         assert_eq!(puzzle.get(0, 0), &empty_cell());
         assert!(puzzle.solve().is_some());
+    }
+
+    #[test]
+    fn solve_detects_impossible_puzzles() {
+        // This puzzle reqires that some of the variables are guessed.
+        let lines = [
+            "11xxxxxxx",
+            "xxxxxxxxx",
+            "xxxxxxxxx",
+            "xxxxxxxxx",
+            "xxxxxxxxx",
+            "xxxxxxxxx",
+            "xxxxxxxxx",
+            "xxxxxxxxx",
+            "xxxxxxxxx",
+        ];
+        let puzzle = Grid::parse(&lines.join("\n"));
+        assert!(puzzle.solve().is_none());
     }
 
     #[test]
