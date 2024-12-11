@@ -1,4 +1,4 @@
-use std::collections::BTreeSet;
+use std::{collections::BTreeSet, env::args};
 
 #[derive(Clone)]
 struct Grid<A> {
@@ -262,9 +262,10 @@ fn is_determined(cell: &CellAssignment) -> bool {
     cell.len() <= 1
 }
 
-fn most_constraining_fn() {
-    todo!()
-}
+// TODO we can implement this to speed up solving, but it's fast enough already.
+// fn most_constraining_fn() {
+//     todo!()
+// }
 
 fn all_in_large_cell(x: usize, y: usize) -> impl Iterator<Item = (usize, usize)> {
     // The initial starting cell for the 3x3 cell block.
@@ -276,23 +277,12 @@ fn all_in_large_cell(x: usize, y: usize) -> impl Iterator<Item = (usize, usize)>
 }
 
 fn main() {
-    // TODO load from a file.
-    // let puzzle = Grid::empty();
+    let filename = args()
+        .nth(1)
+        .expect("You must provide a filename as the first argument.");
+    let contents = std::fs::read_to_string(filename).unwrap();
 
-    let lines = [
-        "x1xxx6xxx",
-        "7xx3xx8x5",
-        "xxxxxx79x",
-        "17x5xxxx9",
-        "9x3x27xx8",
-        "xxx1xxxxx",
-        "8x5xx1x3x",
-        "xxx97xx8x",
-        "xxxxx59x2",
-    ];
-    let puzzle = Grid::parse(&lines.join("\n"));
-    // TODO fuzz test that none of the assigned cells change.
-    // TODO fuzz test that the solution is valid.
+    let puzzle = Grid::parse(contents.as_ref());
 
     assert!(puzzle.is_valid(), "The puzzle must be valid at the start");
     if let Some(puzzle) = puzzle.solve() {
