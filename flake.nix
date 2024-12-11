@@ -1,6 +1,6 @@
 {
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-  # inputs.nixpkgs.url = "flake:n";
+  # inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+  inputs.nixpkgs.url = "flake:n";
   outputs = { self, nixpkgs, ... }:
     let
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
